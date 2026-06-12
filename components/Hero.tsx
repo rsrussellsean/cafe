@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
-import { img } from "@/lib/data";
+import { business } from "@/lib/data";
 
 export default function Hero() {
   const ref = useRef<HTMLElement>(null);
@@ -24,8 +24,11 @@ export default function Hero() {
         .from(
           "[data-hero-img]",
           {
-            clipPath: "inset(100% 0% 0% 0%)",
-            duration: 1.4,
+            opacity: 0,
+            y: 60,
+            scale: 0.9,
+            duration: 1.3,
+            stagger: 0.15,
             ease: "expo.out",
           },
           "-=1",
@@ -33,7 +36,7 @@ export default function Hero() {
         .from(
           "[data-hero-badge]",
           { scale: 0, duration: 0.9, ease: "back.out(1.7)" },
-          "-=0.8",
+          "-=0.9",
         );
     }, ref);
     return () => ctx.revert();
@@ -50,99 +53,113 @@ export default function Hero() {
         data-hero-fade
         className="flex items-center justify-between font-mono text-[11px] uppercase tracking-[0.25em] text-ink/60"
       >
-        <span>Est. 2019 — Quezon City</span>
-        <span className="hidden md:block">Coffee · Bread · Slow mornings</span>
+        <span>{business.city}</span>
+        <span className="hidden md:block">Coffee · Cakes · Donuts</span>
         <span>☕ Open daily</span>
       </div>
 
-      {/* headline */}
-      <div className="relative z-10 mt-10 md:mt-0">
-        <h1 className="font-display leading-[0.95] tracking-tight text-ink">
-          <span className="line-mask hero-line text-[15vw] md:text-[10.5vw]">
-            <span>Morning,</span>
+      {/* headline — spans full width */}
+      <div className="relative z-10 mt-10 md:mt-8">
+        <h1 className="font-display leading-[0.92] tracking-tight text-ink">
+          <span className="line-mask hero-line text-[12.5vw] md:text-[6.6vw]">
+            <span>
+              Brewed to{" "}
+              <em className="font-light not-italic text-forest">perfection</em>
+            </span>
           </span>
-          <span className="line-mask hero-line text-[15vw] italic font-light text-caramel md:text-[10.5vw]">
-            <span>poured slowly.</span>
+          <span className="line-mask hero-line text-[12.5vw] md:text-[6.6vw]">
+            <span>
+              Baked with <em className="font-light text-caramel">love</em>
+            </span>
           </span>
         </h1>
-
-        <p
-          data-hero-fade
-          className="mt-8 max-w-sm text-base leading-relaxed text-ink/70 md:text-lg"
-        >
-          A neighborhood coffee &amp; bakehouse. Single-origin espresso,
-          72-hour croissants, and a sunlit corner with your name on it.
-        </p>
-
-        <div data-hero-fade className="mt-8 flex items-center gap-4">
-          <a
-            href="#menu"
-            className="rounded-full bg-ink px-7 py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-foam transition-colors duration-300 hover:bg-caramel"
-          >
-            See the menu
-          </a>
-          <a
-            href="#story"
-            className="link-line font-mono text-xs uppercase tracking-[0.2em] text-ink"
-          >
-            Our story ↓
-          </a>
-        </div>
       </div>
 
-      {/* hero image — arched, right side */}
-      <div
-        data-hero-img
-        className="arch absolute bottom-0 right-5 hidden h-[72%] w-[34%] overflow-hidden md:right-10 md:block"
-        style={{ clipPath: "inset(0% 0% 0% 0%)" }}
-      >
-        <Image
-          src={img.pour}
-          alt="Barista pouring a slow morning coffee"
-          fill
-          priority
-          sizes="(min-width: 768px) 34vw, 100vw"
-          className="object-cover"
-        />
-        {/* steam */}
-        <div className="absolute left-1/2 top-6 flex -translate-x-1/2 gap-3">
-          {[0, 1, 2].map((i) => (
-            <span
-              key={i}
-              className="steam-line h-10 w-[3px] rounded-full bg-foam/70"
-              style={{ animationDelay: `${i * 0.6}s` }}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* rotating badge */}
-      <div
-        data-hero-badge
-        className="absolute bottom-24 right-[30%] z-20 hidden h-32 w-32 md:block"
-      >
-        <svg viewBox="0 0 100 100" className="spin-slow h-full w-full">
-          <defs>
-            <path
-              id="circ"
-              d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
-            />
-          </defs>
-          <circle cx="50" cy="50" r="49" className="fill-caramel" />
-          <text className="fill-foam font-mono text-[8.5px] uppercase tracking-[2.5px]">
-            <textPath href="#circ">
-              freshly roasted · baked at dawn · katperry ·
-            </textPath>
-          </text>
-          <text
-            x="50"
-            y="55"
-            textAnchor="middle"
-            className="fill-foam text-[16px]"
+      {/* lower region: copy on the left, products on the right */}
+      <div className="relative mt-10 flex-1 md:mt-0">
+        <div className="relative z-10 max-w-md md:absolute md:bottom-2 md:left-0">
+          <p
+            data-hero-fade
+            className="text-base leading-relaxed text-ink/70 md:text-lg"
           >
-            ✺
-          </text>
-        </svg>
+            Wake up your taste buds with our handcrafted coffee, fresh donuts,
+            and irresistible cakes.
+          </p>
+
+          <div data-hero-fade className="mt-8 flex items-center gap-4">
+            <a
+              href="#menu"
+              className="rounded-full bg-forest px-8 py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-foam transition-colors duration-300 hover:bg-gold hover:text-forest-deep"
+            >
+              Order Now
+            </a>
+            <a
+              href="#testimonials"
+              className="link-line font-mono text-xs uppercase tracking-[0.2em] text-ink"
+            >
+              Read reviews ↓
+            </a>
+          </div>
+        </div>
+
+        {/* floating product cutouts */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-0 hidden md:block">
+          <div
+            data-hero-img
+            className="bob product-shadow absolute right-[14%] top-0 h-[78%] w-[34%]"
+          >
+            <Image
+              src="/images/hero-drink.png"
+              alt="Biscoff caramel iced coffee"
+              fill
+              priority
+              sizes="30vw"
+              className="object-contain object-bottom"
+            />
+          </div>
+          <div
+            data-hero-img
+            className="bob product-shadow absolute bottom-0 right-0 h-[42%] w-[24%]"
+            style={{ animationDelay: "0.8s" }}
+          >
+            <Image
+              src="/images/hero-cake.png"
+              alt="Burnt basque cheesecake slice"
+              fill
+              sizes="22vw"
+              className="object-contain object-bottom"
+            />
+          </div>
+
+          {/* rotating badge */}
+          <div
+            data-hero-badge
+            className="absolute bottom-[20%] right-[46%] z-20 h-24 w-24"
+          >
+            <svg viewBox="0 0 100 100" className="spin-slow h-full w-full">
+              <defs>
+                <path
+                  id="circ"
+                  d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+                />
+              </defs>
+              <circle cx="50" cy="50" r="49" className="fill-forest" />
+              <text className="fill-foam font-mono text-[8px] uppercase tracking-[2px]">
+                <textPath href="#circ">
+                  kat &amp; perry&rsquo;s · handcrafted daily ·
+                </textPath>
+              </text>
+              <text
+                x="50"
+                y="56"
+                textAnchor="middle"
+                className="fill-gold text-[18px]"
+              >
+                ✺
+              </text>
+            </svg>
+          </div>
+        </div>
       </div>
 
       {/* bottom row */}
@@ -151,7 +168,9 @@ export default function Hero() {
         className="mt-12 flex items-end justify-between font-mono text-[11px] uppercase tracking-[0.25em] text-ink/60"
       >
         <span>Scroll ↓</span>
-        <span className="md:mr-[38%]">№ 014 Maginhawa St.</span>
+        <span className="hidden max-w-[36%] text-right normal-case tracking-[0.15em] md:block">
+          {business.address}
+        </span>
       </div>
     </section>
   );

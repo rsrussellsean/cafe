@@ -1,11 +1,10 @@
 const words = [
-  "Espresso",
-  "Matcha",
-  "Croissants",
-  "Cold Brew",
-  "Sourdough",
-  "Pour Over",
-  "Basque Cheesecake",
+  "Coffee",
+  "Cakes",
+  "Donuts",
+  "Handcrafted",
+  "Brewed Fresh",
+  "Baked with Love",
 ];
 
 export default function Marquee({

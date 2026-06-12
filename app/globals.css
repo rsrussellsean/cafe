@@ -9,6 +9,10 @@
   --color-caramel-soft: #d98e58;
   --color-foam: #fbf7ee;
   --color-sage: #7d8163;
+  --color-forest: #1e5641;
+  --color-forest-deep: #133729;
+  --color-forest-soft: #6f9b86;
+  --color-gold: #d9a441;
 
   --font-display: var(--font-fraunces);
   --font-body: var(--font-karla);
@@ -99,6 +103,26 @@ body {
 /* ---------- arch image frame ---------- */
 .arch {
   border-radius: 999px 999px 24px 24px;
+}
+
+/* ---------- floating product cutouts ---------- */
+.product-shadow {
+  filter: drop-shadow(0 26px 30px rgba(19, 55, 41, 0.28));
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+.bob {
+  animation: bob 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bob {
+    animation: none;
+  }
 }
 
 /* ---------- menu hover float image ---------- */

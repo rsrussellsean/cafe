@@ -1,180 +1,176 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { menu } from "@/lib/data";
+import { drinks } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const flat = menu.flatMap((s) => s.items);
-
-const sections = (() => {
-  let i = 0;
-  return menu.map((s) => ({
-    label: s.label,
-    items: s.items.map((item) => ({ ...item, index: i++ })),
-  }));
-})();
+const tabs = ["Coffee", "Cakes", "Donuts"] as const;
+type Tab = (typeof tabs)[number];
 
 export default function Menu() {
   const ref = useRef<HTMLElement>(null);
-  const floatRef = useRef<HTMLDivElement>(null);
-  const xTo = useRef<gsap.QuickToFunc | null>(null);
-  const yTo = useRef<gsap.QuickToFunc | null>(null);
+  const featuredRef = useRef<HTMLDivElement>(null);
+  const [tab, setTab] = useState<Tab>("Coffee");
+  const [active, setActive] = useState(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      if (floatRef.current) {
-        xTo.current = gsap.quickTo(floatRef.current, "x", {
-          duration: 0.5,
-          ease: "power3",
-        });
-        yTo.current = gsap.quickTo(floatRef.current, "y", {
-          duration: 0.5,
-          ease: "power3",
-        });
-      }
-
-      gsap.from("[data-menu-row]", {
+      gsap.from("[data-menu-head]", {
         y: 40,
         opacity: 0,
-        stagger: 0.06,
+        stagger: 0.08,
         duration: 0.9,
         ease: "power3.out",
-        scrollTrigger: { trigger: "[data-menu-list]", start: "top 80%" },
+        scrollTrigger: { trigger: ref.current, start: "top 75%" },
       });
-
-      gsap.from("[data-menu-title] > span", {
-        yPercent: 110,
-        duration: 1.1,
-        ease: "power4.out",
-        scrollTrigger: { trigger: "[data-menu-title]", start: "top 85%" },
-      });
-
-      // hide the floating preview whenever the section scrolls out of view,
-      // since mouseleave doesn't fire when content moves under a still cursor
-      const hideFloat = () => {
-        if (!floatRef.current) return;
-        gsap.to(floatRef.current, {
-          opacity: 0,
-          scale: 0.85,
-          duration: 0.3,
-          ease: "power3.out",
-        });
-      };
-      ScrollTrigger.create({
-        trigger: ref.current,
-        start: "top bottom",
-        end: "bottom top",
-        onLeave: hideFloat,
-        onLeaveBack: hideFloat,
+      gsap.from("[data-menu-thumb]", {
+        scale: 0.8,
+        opacity: 0,
+        stagger: 0.06,
+        duration: 0.7,
+        ease: "back.out(1.5)",
+        scrollTrigger: { trigger: "[data-menu-grid]", start: "top 85%" },
       });
     }, ref);
     return () => ctx.revert();
   }, []);
 
-  const move = useCallback((e: React.MouseEvent) => {
-    xTo.current?.(e.clientX - 120);
-    yTo.current?.(e.clientY - 150);
-  }, []);
+  // soft fade/swap when the featured drink changes
+  useEffect(() => {
+    if (!featuredRef.current) return;
+    gsap.fromTo(
+      featuredRef.current,
+      { opacity: 0, y: 16 },
+      { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" },
+    );
+  }, [active, tab]);
 
-  const show = useCallback((i: number) => {
-    const el = floatRef.current;
-    if (!el) return;
-    el.querySelectorAll("[data-float-img]").forEach((node, idx) => {
-      (node as HTMLElement).style.opacity = idx === i ? "1" : "0";
-    });
-    gsap.to(el, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
-  }, []);
-
-  const hide = useCallback(() => {
-    if (!floatRef.current) return;
-    gsap.to(floatRef.current, {
-      opacity: 0,
-      scale: 0.85,
-      duration: 0.35,
-      ease: "power3.out",
-    });
-  }, []);
+  const drink = drinks[active];
 
   return (
     <section
       id="menu"
       ref={ref}
-      className="bg-espresso px-5 py-28 text-foam md:px-10 md:py-40"
-      onMouseMove={move}
-      onMouseLeave={hide}
+      className="bg-forest px-5 py-24 text-foam md:px-10 md:py-32"
     >
-      <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-caramel-soft">
-        ✺ 02 — The Menu
-      </p>
-      <h2
-        data-menu-title
-        className="line-mask mt-6 font-display text-5xl leading-[1.02] tracking-tight md:text-8xl"
-      >
-        <span>
-          Order the <em className="font-light text-caramel-soft">usual.</em>
-        </span>
-      </h2>
-      <p className="mt-6 max-w-md text-foam/60">
-        Prices in PHP. Everything brewed, baked, and whisked in-house — hover an
-        item for a look.
-      </p>
+      <div className="mx-auto max-w-6xl">
+        <p
+          data-menu-head
+          className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold"
+        >
+          ✺ Our Menu
+        </p>
 
-      <div data-menu-list className="mt-16 md:mt-24">
-        {sections.map((section) => (
-          <div key={section.label} className="mb-14 last:mb-0">
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-foam/40">
-              {section.label}
-            </p>
-            <ul>
-              {section.items.map((item) => {
-                return (
-                  <li key={item.name} data-menu-row>
-                    <div
-                      className="group flex cursor-pointer items-baseline justify-between gap-6 border-t border-foam/15 py-6 transition-colors duration-300 last:border-b hover:border-caramel-soft/60 md:py-8"
-                      onMouseEnter={() => show(item.index)}
-                      onMouseLeave={hide}
-                    >
-                      <div className="flex flex-1 items-baseline gap-5">
-                        <h3 className="font-display text-2xl tracking-tight transition-transform duration-300 group-hover:translate-x-3 group-hover:text-caramel-soft md:text-4xl">
-                          {item.name}
-                        </h3>
-                        <p className="hidden font-mono text-xs text-foam/40 md:block">
-                          {item.description}
-                        </p>
-                      </div>
-                      <p className="font-mono text-sm text-foam/70 md:text-base">
-                        ₱{item.price}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </div>
+        {/* tabs */}
+        <div data-menu-head className="mt-6 flex flex-wrap gap-3">
+          {tabs.map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`rounded-full px-6 py-2.5 font-mono text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
+                tab === t
+                  ? "bg-gold text-forest-deep"
+                  : "border border-foam/25 text-foam/70 hover:border-gold hover:text-foam"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
 
-      {/* cursor-following preview */}
-      <div ref={floatRef} className="menu-float hidden md:block">
-        {flat.map((item) => (
-          <div
-            key={item.name}
-            data-float-img
-            className="absolute inset-0 transition-opacity duration-200"
-          >
-            <Image
-              src={item.image}
-              alt={item.name}
-              fill
-              sizes="240px"
-              className="object-cover"
-            />
+        {tab === "Coffee" ? (
+          <div className="mt-12 grid items-center gap-10 md:mt-16 md:grid-cols-2 md:gap-16">
+            {/* featured */}
+            <div
+              ref={featuredRef}
+              className="flex flex-col items-center gap-8 md:flex-row md:items-center"
+            >
+              <div className="product-shadow relative h-72 w-56 shrink-0">
+                <Image
+                  src={drink.image}
+                  alt={drink.name}
+                  fill
+                  sizes="(min-width: 768px) 14rem, 14rem"
+                  className="object-contain"
+                />
+              </div>
+              <div className="text-center md:text-left">
+                <h3 className="font-display text-4xl leading-tight tracking-tight md:text-5xl">
+                  {drink.name}
+                </h3>
+                <p className="mt-3 font-mono text-2xl text-gold">
+                  ₱ {drink.price}
+                </p>
+                <p className="mx-auto mt-5 max-w-sm text-sm leading-relaxed text-foam/70 md:mx-0">
+                  {drink.description}
+                </p>
+                <a
+                  href="#contact"
+                  className="mt-7 inline-block rounded-full bg-gold px-8 py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-forest-deep transition-colors duration-300 hover:bg-foam"
+                >
+                  Order Now
+                </a>
+              </div>
+            </div>
+
+            {/* thumbnail selector */}
+            <div data-menu-grid className="grid grid-cols-3 gap-4 md:gap-5">
+              {drinks.map((d, i) => (
+                <button
+                  key={d.name}
+                  data-menu-thumb
+                  onClick={() => setActive(i)}
+                  aria-label={d.name}
+                  className={`group relative aspect-square overflow-hidden rounded-2xl border transition-all duration-300 ${
+                    i === active
+                      ? "border-gold bg-foam/10"
+                      : "border-foam/15 bg-foam/5 hover:border-foam/40"
+                  }`}
+                >
+                  <Image
+                    src={d.image}
+                    alt={d.name}
+                    fill
+                    sizes="120px"
+                    className="object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-        ))}
+        ) : (
+          <div className="mt-12 flex flex-col items-center gap-8 rounded-3xl border border-foam/15 bg-foam/5 px-6 py-16 text-center md:mt-16 md:flex-row md:justify-center md:gap-12 md:text-left">
+            <div className="product-shadow relative h-56 w-64 shrink-0">
+              <Image
+                src="/images/hero-cake.png"
+                alt={`${tab} at Kat & Perry's`}
+                fill
+                sizes="16rem"
+                className="object-contain"
+              />
+            </div>
+            <div className="max-w-md">
+              <h3 className="font-display text-3xl tracking-tight md:text-4xl">
+                Freshly baked {tab.toLowerCase()}, daily.
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-foam/70">
+                Our {tab.toLowerCase()} are made fresh every morning and sell out
+                fast. Drop by the store or message us to see today&rsquo;s
+                selection and reserve yours — available per piece or per slice.
+              </p>
+              <a
+                href="#contact"
+                className="mt-6 inline-block rounded-full bg-gold px-8 py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-forest-deep transition-colors duration-300 hover:bg-foam"
+              >
+                Message to order
+              </a>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );
