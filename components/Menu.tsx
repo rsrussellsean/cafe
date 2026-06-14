@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useOptimistic,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { drinks } from "@/lib/data";
+import { drinks, type Drink } from "@/lib/data";
+import { useBag } from "@/lib/bag-context";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -47,6 +54,11 @@ export default function Menu() {
       const xTo = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3" });
       const yTo = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3" });
       const onMove = (e: MouseEvent) => {
+        // hide the preview while the pointer is over the bag dropdown
+        if ((e.target as Element)?.closest?.("[data-bag-dropdown]")) {
+          gsap.to(el, { opacity: 0, scale: 0.85, duration: 0.3 });
+          return;
+        }
         const r = ref.current?.getBoundingClientRect();
         if (!r) return;
         // section-relative coords since the float is absolute inside it
@@ -184,12 +196,18 @@ export default function Menu() {
                         <p className="max-w-xl text-sm leading-relaxed text-foam/70">
                           {d.description}
                         </p>
-                        <a
-                          href="#contact"
-                          className="link-line mt-5 inline-block font-mono text-xs uppercase tracking-[0.2em] text-gold"
+                        <div
+                          onMouseEnter={hideFloat}
+                          className="mt-5 flex flex-wrap items-center gap-5"
                         >
-                          Order this ↗
-                        </a>
+                          <AddToBagButton drink={d} />
+                          <a
+                            href="#contact"
+                            className="link-line inline-block font-mono text-xs uppercase tracking-[0.2em] text-foam/60"
+                          >
+                            Order this ↗
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -245,5 +263,43 @@ export default function Menu() {
         ))}
       </div>
     </section>
+  );
+}
+
+function AddToBagButton({ drink }: { drink: Drink }) {
+  const { add, setOpen, items } = useBag();
+  const qty = items.find((i) => i.name === drink.name)?.qty ?? 0;
+  // Optimistic count: bumps instantly on click, then reconciles to real state.
+  const [optimisticQty, bumpOptimistic] = useOptimistic(qty, (c) => c + 1);
+  const [, startTransition] = useTransition();
+  const [added, setAdded] = useState(false);
+
+  const handleAdd = () => {
+    startTransition(() => {
+      bumpOptimistic(drink.name);
+      add(drink);
+    });
+    setAdded(true);
+    // Open the bag on add. When it's already open this is a no-op (no re-pop),
+    // and the data-bag-keep-open attr stops the outside-click from closing it.
+    setOpen(true);
+    window.setTimeout(() => setAdded(false), 1400);
+  };
+
+  const label = added
+    ? `Added ✓ · ${optimisticQty}`
+    : optimisticQty > 0
+      ? `+ Add more · ${optimisticQty}`
+      : "+ Add to bag";
+
+  return (
+    <button
+      type="button"
+      onClick={handleAdd}
+      data-bag-keep-open
+      className="rounded-full bg-gold px-6 py-3 font-mono text-xs uppercase tracking-[0.2em] text-forest-deep transition-colors duration-300 hover:bg-foam"
+    >
+      {label}
+    </button>
   );
 }

@@ -88,17 +88,17 @@ export default function Hero() {
       className="relative flex min-h-svh flex-col overflow-hidden px-5 pb-8 pt-28 md:px-10"
     >
       {/* topline */}
-      <div
+      {/* <div
         data-hero-fade
         className="flex items-center justify-between border-b border-ink/10 pb-5 font-mono text-[11px] uppercase tracking-[0.25em] text-ink/60"
       >
         <span>{business.city}</span>
         <span className="hidden md:block">Coffee · Cakes · Donuts</span>
         <span>☕ Open daily</span>
-      </div>
+      </div> */}
 
       {/* floating drink cutout, behind the type */}
-      <div className="pointer-events-none absolute -right-10 top-[14%] z-0 w-44 md:right-[5vw] md:top-[16%] md:w-[16vw] md:max-w-72">
+      {/* <div className="pointer-events-none absolute -right-10 top-[14%] z-0 w-44 md:right-[5vw] md:top-[16%] md:w-[16vw] md:max-w-72">
         <div data-depth="0.5">
           <div data-hero-img>
             <div className="bob product-shadow">
@@ -114,19 +114,22 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
-      <p
+      </div> */}
+      {/* <p
         data-hero-fade
         className="pointer-events-none absolute right-[5vw] top-[58%] hidden font-mono text-[11px] uppercase tracking-[0.2em] text-ink/50 md:block"
       >
         ↖ our brown-sugar bestseller
-      </p>
+      </p> */}
 
       {/* floating cake cutout, bottom-left */}
-      <div className="pointer-events-none absolute -left-8 bottom-[12%] z-0 w-36 md:left-[6vw] md:bottom-[18%] md:w-[11vw] md:max-w-52">
+      {/* <div className="pointer-events-none absolute -left-8 bottom-[12%] z-0 w-36 md:left-[6vw] md:bottom-[18%] md:w-[11vw] md:max-w-52">
         <div data-depth="0.9">
           <div data-hero-img>
-            <div className="bob product-shadow" style={{ animationDelay: "-2.4s" }}>
+            <div
+              className="bob product-shadow"
+              style={{ animationDelay: "-2.4s" }}
+            >
               <Image
                 src="/images/hero-cake.png"
                 alt=""
@@ -138,10 +141,10 @@ export default function Hero() {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* rotating badge, top-left counterweight */}
-      <div
+      {/* <div
         data-hero-badge
         className="absolute left-[6vw] top-[19%] z-20 hidden h-24 w-24 md:block"
       >
@@ -167,7 +170,7 @@ export default function Hero() {
             ✺
           </text>
         </svg>
-      </div>
+      </div> */}
 
       {/* centered editorial headline */}
       <div className="relative z-10 flex flex-1 flex-col items-center justify-center py-12 text-center">
@@ -225,8 +228,8 @@ export default function Hero() {
           data-hero-fade
           className="mt-8 max-w-md text-base leading-relaxed text-ink/70 md:text-lg"
         >
-          Wake up your taste buds with our handcrafted coffee, fresh donuts,
-          and irresistible cakes.
+          Wake up your taste buds with our handcrafted coffee, fresh donuts, and
+          irresistible cakes.
         </p>
 
         <div data-hero-fade className="mt-8 flex items-center gap-5">
@@ -250,8 +253,8 @@ export default function Hero() {
         data-hero-fade
         className="relative z-10 flex items-center justify-between border-t border-ink/10 pt-5 font-mono text-[11px] uppercase tracking-[0.25em] text-ink/60"
       >
-        <span>★ 5.0 — from our regulars</span>
-        <span className="hidden md:block">Tisa · Mandaue</span>
+        <span>Tisa · Mandaue</span>
+        <span className="hidden md:block">Coffee · Cakes · Donuts</span>
         <span>Scroll ↓</span>
       </div>
     </section>

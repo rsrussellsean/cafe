@@ -8,9 +8,9 @@ import { branches, business } from "@/lib/data";
 gsap.registerPlugin(ScrollTrigger);
 
 const socials = [
-  { label: "IG", href: business.social.instagram },
-  { label: "FB", href: business.social.facebook },
-  { label: "TT", href: business.social.tiktok },
+  { label: "Instagram", href: business.social.instagram, Icon: InstagramIcon },
+  { label: "Facebook", href: business.social.facebook, Icon: FacebookIcon },
+  { label: "TikTok", href: business.social.tiktok, Icon: TikTokIcon },
 ];
 
 export default function ContactForm() {
@@ -164,12 +164,19 @@ export default function ContactForm() {
                 <dt className="text-ink/50">HOURS</dt>
                 <dd>OPEN DAILY</dd>
               </div>
-              <div className="flex justify-between gap-4">
+              <div className="flex items-center justify-between gap-4">
                 <dt className="text-ink/50">FOLLOW</dt>
-                <dd className="flex gap-3">
-                  {socials.map((s) => (
-                    <a key={s.label} className="link-line" href={s.href}>
-                      {s.label}
+                <dd className="flex gap-2">
+                  {socials.map(({ label, href, Icon }) => (
+                    <a
+                      key={label}
+                      href={href}
+                      aria-label={label}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex h-8 w-8 items-center justify-center rounded-full bg-forest text-foam transition-colors duration-300 hover:bg-gold hover:text-forest-deep"
+                    >
+                      <Icon />
                     </a>
                   ))}
                 </dd>
@@ -205,5 +212,41 @@ export default function ContactForm() {
         </div>
       </div>
     </section>
+  );
+}
+
+function InstagramIcon() {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.9"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function FacebookIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M13.5 21v-7.5h2.5l.4-3h-2.9V8.6c0-.9.3-1.5 1.6-1.5h1.4V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H7.9v3h2.5V21h3.1z" />
+    </svg>
+  );
+}
+
+function TikTokIcon() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M16.6 5.82a3.6 3.6 0 0 1-1.7-2.82h-2.78v11.04a2.13 2.13 0 1 1-2.14-2.13c.22 0 .43.03.63.1V9.5a5 5 0 1 0 4.35 4.96V8.66a6.5 6.5 0 0 0 3.5 1.02V6.9a3.6 3.6 0 0 1-1.86-1.08z" />
+    </svg>
   );
 }
