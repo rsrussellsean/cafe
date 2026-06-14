@@ -90,6 +90,8 @@ export default function Footer() {
               <a
                 key={s.label}
                 href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="link-line font-mono text-[11px] uppercase tracking-[0.15em] text-foam/70"
               >
                 {s.label}

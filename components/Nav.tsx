@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { business } from "@/lib/data";
+import BagButton from "@/components/BagButton";
 
 const links = [
-  { label: "Home", href: "#top" },
-  { label: "Menu", href: "#menu" },
-  { label: "Testimonials", href: "#testimonials" },
-  { label: "Locations", href: "#locations" },
-  { label: "Contact", href: "#contact" },
+  { label: "Home", href: "/#top" },
+  { label: "Menu", href: "/#menu" },
+  { label: "Testimonials", href: "/#testimonials" },
+  { label: "Locations", href: "/#locations" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 export default function Nav() {
@@ -49,7 +50,7 @@ export default function Nav() {
     >
       <nav className="flex items-center justify-between px-5 py-3 md:px-10">
         <a
-          href="#top"
+          href="/#top"
           data-nav-item
           className="flex items-center gap-3"
           aria-label={business.name}
@@ -83,17 +84,19 @@ export default function Nav() {
           ))}
         </ul>
 
-        <a
-          href="#menu"
-          data-nav-item
-          className={`rounded-full px-5 py-2.5 font-mono text-xs uppercase tracking-[0.15em] transition-colors duration-300 ${
-            scrolled
-              ? "bg-gold text-forest-deep hover:bg-foam"
-              : "bg-forest text-foam hover:bg-gold hover:text-forest-deep"
-          }`}
-        >
-          Order Now
-        </a>
+        <div data-nav-item className="flex items-center gap-2 md:gap-3">
+          <BagButton scrolled={scrolled} />
+          <a
+            href="/#menu"
+            className={`rounded-full px-5 py-2.5 font-mono text-xs uppercase tracking-[0.15em] transition-colors duration-300 ${
+              scrolled
+                ? "bg-gold text-forest-deep hover:bg-foam"
+                : "bg-forest text-foam hover:bg-gold hover:text-forest-deep"
+            }`}
+          >
+            Order Now
+          </a>
+        </div>
       </nav>
     </header>
   );

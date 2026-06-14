@@ -195,3 +195,13 @@ body {
     animation: none;
   }
 }
+
+/* ---------- hidden scrollbar (still scrollable) ---------- */
+.no-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* old Edge / IE */
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome / Safari */
+}

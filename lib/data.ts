@@ -14,9 +14,9 @@ export const business = {
   mapsUrl:
     "https://maps.google.com/?q=Cabarubbias+St+San+Jose+Village+Tisa+Cebu+City",
   social: {
-    instagram: "#",
-    facebook: "#",
-    tiktok: "#",
+    instagram: "https://www.instagram.com/katandperryskitchenette/",
+    facebook: "https://www.instagram.com/katandperryskitchenette/",
+    tiktok: "https://www.tiktok.com/@katandperryskitchenette",
   },
 };
 

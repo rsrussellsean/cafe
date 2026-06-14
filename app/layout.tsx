@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Karla, DM_Mono } from "next/font/google";
+import { BagProvider } from "@/lib/bag-context";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -37,7 +38,7 @@ export default function RootLayout({
       className={`${fraunces.variable} ${karla.variable} ${dmMono.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-cream text-ink font-body overflow-x-clip">
-        {children}
+        <BagProvider>{children}</BagProvider>
       </body>
     </html>
   );
