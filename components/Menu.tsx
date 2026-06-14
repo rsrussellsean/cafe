@@ -1,177 +1,245 @@
 "use client";
 
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { menu } from "@/lib/data";
+import { drinks } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const flat = menu.flatMap((s) => s.items);
-
-const sections = (() => {
-  let i = 0;
-  return menu.map((s) => ({
-    label: s.label,
-    items: s.items.map((item) => ({ ...item, index: i++ })),
-  }));
-})();
+const tabs = ["Coffee", "Cakes", "Donuts"] as const;
+type Tab = (typeof tabs)[number];
 
 export default function Menu() {
   const ref = useRef<HTMLElement>(null);
   const floatRef = useRef<HTMLDivElement>(null);
-  const xTo = useRef<gsap.QuickToFunc | null>(null);
-  const yTo = useRef<gsap.QuickToFunc | null>(null);
+  const [tab, setTab] = useState<Tab>("Coffee");
+  const [open, setOpen] = useState(0);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      if (floatRef.current) {
-        xTo.current = gsap.quickTo(floatRef.current, "x", {
-          duration: 0.5,
-          ease: "power3",
-        });
-        yTo.current = gsap.quickTo(floatRef.current, "y", {
-          duration: 0.5,
-          ease: "power3",
-        });
-      }
-
-      gsap.from("[data-menu-row]", {
+      gsap.from("[data-menu-head]", {
         y: 40,
         opacity: 0,
-        stagger: 0.06,
+        stagger: 0.08,
         duration: 0.9,
         ease: "power3.out",
-        scrollTrigger: { trigger: "[data-menu-list]", start: "top 80%" },
+        scrollTrigger: { trigger: ref.current, start: "top 75%" },
       });
-
-      gsap.from("[data-menu-title] > span", {
-        yPercent: 110,
-        duration: 1.1,
-        ease: "power4.out",
-        scrollTrigger: { trigger: "[data-menu-title]", start: "top 85%" },
-      });
-
-      // hide the floating preview whenever the section scrolls out of view,
-      // since mouseleave doesn't fire when content moves under a still cursor
-      const hideFloat = () => {
-        if (!floatRef.current) return;
-        gsap.to(floatRef.current, {
-          opacity: 0,
-          scale: 0.85,
-          duration: 0.3,
-          ease: "power3.out",
-        });
-      };
-      ScrollTrigger.create({
-        trigger: ref.current,
-        start: "top bottom",
-        end: "bottom top",
-        onLeave: hideFloat,
-        onLeaveBack: hideFloat,
+      gsap.from("[data-menu-row]", {
+        y: 36,
+        opacity: 0,
+        stagger: 0.07,
+        duration: 0.8,
+        ease: "power3.out",
+        scrollTrigger: { trigger: ref.current, start: "top 60%" },
       });
     }, ref);
-    return () => ctx.revert();
-  }, []);
 
-  const move = useCallback((e: React.MouseEvent) => {
-    xTo.current?.(e.clientX - 120);
-    yTo.current?.(e.clientY - 150);
-  }, []);
-
-  const show = useCallback((i: number) => {
+    // cursor-following preview card (desktop, motion-safe only)
+    let removeMove: (() => void) | undefined;
     const el = floatRef.current;
-    if (!el) return;
-    el.querySelectorAll("[data-float-img]").forEach((node, idx) => {
-      (node as HTMLElement).style.opacity = idx === i ? "1" : "0";
-    });
-    gsap.to(el, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
+    const fine = window.matchMedia(
+      "(hover: hover) and (prefers-reduced-motion: no-preference)",
+    );
+    if (el && fine.matches) {
+      const xTo = gsap.quickTo(el, "x", { duration: 0.45, ease: "power3" });
+      const yTo = gsap.quickTo(el, "y", { duration: 0.45, ease: "power3" });
+      const onMove = (e: MouseEvent) => {
+        const r = ref.current?.getBoundingClientRect();
+        if (!r) return;
+        // section-relative coords since the float is absolute inside it
+        xTo(e.clientX - r.left - 120);
+        yTo(e.clientY - r.top - 160);
+      };
+      // mouseleave doesn't fire while scrolling, so hide on scroll too
+      const onScroll = () =>
+        gsap.to(el, { opacity: 0, scale: 0.85, duration: 0.3 });
+      window.addEventListener("mousemove", onMove);
+      window.addEventListener("scroll", onScroll, { passive: true });
+      removeMove = () => {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("scroll", onScroll);
+      };
+    }
+
+    return () => {
+      removeMove?.();
+      ctx.revert();
+    };
   }, []);
 
-  const hide = useCallback(() => {
+  const showFloat = (i: number) => {
+    const el = floatRef.current;
+    if (!el || !window.matchMedia("(hover: hover)").matches) return;
+    gsap.to(el, { opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" });
+    el.querySelectorAll("[data-float-img]").forEach((img, j) =>
+      gsap.to(img, { opacity: j === i ? 1 : 0, duration: 0.3 }),
+    );
+  };
+
+  const hideFloat = () => {
     if (!floatRef.current) return;
-    gsap.to(floatRef.current, {
-      opacity: 0,
-      scale: 0.85,
-      duration: 0.35,
-      ease: "power3.out",
-    });
-  }, []);
+    gsap.to(floatRef.current, { opacity: 0, scale: 0.85, duration: 0.3 });
+  };
 
   return (
     <section
       id="menu"
       ref={ref}
-      className="bg-espresso px-5 py-28 text-foam md:px-10 md:py-40"
-      onMouseMove={move}
-      onMouseLeave={hide}
+      className="relative overflow-hidden bg-forest px-5 py-24 text-foam md:px-10 md:py-32"
     >
-      <p className="font-mono text-[11px] uppercase tracking-[0.3em] text-caramel-soft">
-        ✺ 02 — The Menu
-      </p>
-      <h2
-        data-menu-title
-        className="line-mask mt-6 font-display text-5xl leading-[1.02] tracking-tight md:text-8xl"
+      {/* giant backdrop word */}
+      <span
+        aria-hidden
+        className="text-outline pointer-events-none absolute -top-6 right-[-2vw] select-none font-display italic leading-none text-[26vw]"
       >
-        <span>
-          Order the <em className="font-light text-caramel-soft">usual.</em>
-        </span>
-      </h2>
-      <p className="mt-6 max-w-md text-foam/60">
-        Prices in PHP. Everything brewed, baked, and whisked in-house — hover an
-        item for a look.
-      </p>
+        Menu
+      </span>
 
-      <div data-menu-list className="mt-16 md:mt-24">
-        {sections.map((section) => (
-          <div key={section.label} className="mb-14 last:mb-0">
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.3em] text-foam/40">
-              {section.label}
-            </p>
-            <ul>
-              {section.items.map((item) => {
-                return (
-                  <li key={item.name} data-menu-row>
-                    <div
-                      className="group flex cursor-pointer items-baseline justify-between gap-6 border-t border-foam/15 py-6 transition-colors duration-300 last:border-b hover:border-caramel-soft/60 md:py-8"
-                      onMouseEnter={() => show(item.index)}
-                      onMouseLeave={hide}
-                    >
-                      <div className="flex flex-1 items-baseline gap-5">
-                        <h3 className="font-display text-2xl tracking-tight transition-transform duration-300 group-hover:translate-x-3 group-hover:text-caramel-soft md:text-4xl">
-                          {item.name}
-                        </h3>
-                        <p className="hidden font-mono text-xs text-foam/40 md:block">
-                          {item.description}
-                        </p>
-                      </div>
-                      <p className="font-mono text-sm text-foam/70 md:text-base">
-                        ₱{item.price}
-                      </p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
+      <div className="relative mx-auto max-w-6xl">
+        <p
+          data-menu-head
+          className="font-mono text-[11px] uppercase tracking-[0.3em] text-gold"
+        >
+          ✺ Our Menu
+        </p>
+
+        <div className="mt-5 flex flex-wrap items-end justify-between gap-6">
+          <h2
+            data-menu-head
+            className="font-display text-4xl leading-tight tracking-tight md:text-6xl"
+          >
+            What&rsquo;s <em className="font-light text-gold">brewing</em>
+          </h2>
+
+          {/* tabs */}
+          <div data-menu-head className="flex flex-wrap gap-3">
+            {tabs.map((t) => (
+              <button
+                key={t}
+                onClick={() => setTab(t)}
+                className={`rounded-full px-5 py-2 font-mono text-xs uppercase tracking-[0.2em] transition-colors duration-300 ${
+                  tab === t
+                    ? "bg-gold text-forest-deep"
+                    : "border border-foam/25 text-foam/70 hover:border-gold hover:text-foam"
+                }`}
+              >
+                {t}
+              </button>
+            ))}
           </div>
-        ))}
+        </div>
+
+        {tab === "Coffee" ? (
+          <ol className="mt-10 md:mt-14" onMouseLeave={hideFloat}>
+            {drinks.map((d, i) => (
+              <li key={d.name} data-menu-row className="border-b border-foam/15">
+                <button
+                  onClick={() => setOpen(open === i ? -1 : i)}
+                  onMouseEnter={() => showFloat(i)}
+                  aria-expanded={open === i}
+                  className="group flex w-full items-baseline gap-4 py-6 text-left md:gap-8 md:py-7"
+                >
+                  <span className="font-mono text-xs text-gold">
+                    0{i + 1}
+                  </span>
+                  <span
+                    className={`flex-1 font-display text-3xl tracking-tight transition-all duration-300 group-hover:translate-x-2 group-hover:text-gold md:text-5xl ${
+                      open === i ? "text-gold" : ""
+                    }`}
+                  >
+                    {d.name}
+                  </span>
+                  <span className="font-mono text-sm text-foam/60 md:text-base">
+                    ₱ {d.price}
+                  </span>
+                  <span
+                    className="hidden w-4 text-center font-mono text-lg text-foam/40 transition-transform duration-300 md:block"
+                    aria-hidden
+                  >
+                    {open === i ? "−" : "+"}
+                  </span>
+                </button>
+
+                {/* accordion detail */}
+                <div
+                  className={`grid transition-[grid-template-rows] duration-500 ease-out ${
+                    open === i ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  }`}
+                >
+                  <div className="overflow-hidden">
+                    <div className="flex items-center gap-6 pb-8 md:pl-12">
+                      <div className="product-shadow relative h-36 w-28 shrink-0 md:hidden">
+                        <Image
+                          src={d.image}
+                          alt={d.name}
+                          fill
+                          sizes="7rem"
+                          className="object-contain"
+                        />
+                      </div>
+                      <div>
+                        <p className="max-w-xl text-sm leading-relaxed text-foam/70">
+                          {d.description}
+                        </p>
+                        <a
+                          href="#contact"
+                          className="link-line mt-5 inline-block font-mono text-xs uppercase tracking-[0.2em] text-gold"
+                        >
+                          Order this ↗
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div className="mt-12 grid items-center gap-10 md:mt-16 md:grid-cols-[1.2fr_1fr]">
+            <div>
+              <h3 className="font-display text-4xl leading-tight tracking-tight md:text-6xl">
+                Freshly baked{" "}
+                <em className="font-light text-gold">{tab.toLowerCase()}</em>,
+                every morning.
+              </h3>
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-foam/70">
+                Our {tab.toLowerCase()} are made fresh daily and sell out fast.
+                Drop by the store or message us to see today&rsquo;s selection
+                and reserve yours — available per piece or per slice.
+              </p>
+              <a
+                href="#contact"
+                className="mt-7 inline-block rounded-full bg-gold px-8 py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-forest-deep transition-colors duration-300 hover:bg-foam"
+              >
+                Message to order
+              </a>
+            </div>
+            <div className="arch relative mx-auto h-72 w-60 overflow-hidden bg-foam/10 md:h-96 md:w-72">
+              <Image
+                src="/images/hero-cake.png"
+                alt={`${tab} at Kat & Perry's`}
+                fill
+                sizes="18rem"
+                className="product-shadow object-contain px-5 py-8"
+              />
+            </div>
+          </div>
+        )}
       </div>
 
       {/* cursor-following preview */}
-      <div ref={floatRef} className="menu-float hidden md:block">
-        {flat.map((item) => (
-          <div
-            key={item.name}
-            data-float-img
-            className="absolute inset-0 transition-opacity duration-200"
-          >
+      <div ref={floatRef} className="menu-float bg-gold" aria-hidden>
+        {drinks.map((d) => (
+          <div key={d.name} data-float-img className="absolute inset-0">
             <Image
-              src={item.image}
-              alt={item.name}
+              src={d.image}
+              alt=""
               fill
               sizes="240px"
-              className="object-cover"
+              className="object-contain p-4 pb-2"
             />
           </div>
         ))}

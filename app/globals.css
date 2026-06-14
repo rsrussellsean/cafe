@@ -9,6 +9,10 @@
   --color-caramel-soft: #d98e58;
   --color-foam: #fbf7ee;
   --color-sage: #7d8163;
+  --color-forest: #1e5641;
+  --color-forest-deep: #133729;
+  --color-forest-soft: #6f9b86;
+  --color-gold: #d9a441;
 
   --font-display: var(--font-fraunces);
   --font-body: var(--font-karla);
@@ -101,9 +105,31 @@ body {
   border-radius: 999px 999px 24px 24px;
 }
 
+/* ---------- floating product cutouts ---------- */
+.product-shadow {
+  filter: drop-shadow(0 26px 30px rgba(19, 55, 41, 0.28));
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-14px); }
+}
+
+.bob {
+  animation: bob 5s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bob {
+    animation: none;
+  }
+}
+
 /* ---------- menu hover float image ---------- */
+/* absolute inside the overflow-hidden menu section so it can never
+   bleed into neighboring sections while scrolling */
 .menu-float {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 240px;
@@ -118,6 +144,24 @@ body {
 
 .menu-float [data-float-img] {
   opacity: 0;
+}
+
+/* ---------- outline display text ---------- */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(251, 247, 238, 0.16);
+}
+
+/* ---------- receipt torn edge ---------- */
+.receipt::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: conic-gradient(from 135deg at top, #fbf7ee 90deg, transparent 0)
+    top / 14px 10px repeat-x;
 }
 
 /* ---------- underline link ---------- */
