@@ -126,8 +126,10 @@ body {
 }
 
 /* ---------- menu hover float image ---------- */
+/* absolute inside the overflow-hidden menu section so it can never
+   bleed into neighboring sections while scrolling */
 .menu-float {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
   width: 240px;
@@ -142,6 +144,24 @@ body {
 
 .menu-float [data-float-img] {
   opacity: 0;
+}
+
+/* ---------- outline display text ---------- */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(251, 247, 238, 0.16);
+}
+
+/* ---------- receipt torn edge ---------- */
+.receipt::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+  background: conic-gradient(from 135deg at top, #fbf7ee 90deg, transparent 0)
+    top / 14px 10px repeat-x;
 }
 
 /* ---------- underline link ---------- */

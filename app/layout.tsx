@@ -21,7 +21,7 @@ const dmMono = DM_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kat & Perry's Kitchenette — coffee, cakes & donuts",
+  title: "Kat & Perry's Kitchenette",
   description:
     "Handcrafted coffee, fresh donuts, and irresistible cakes in Tisa, Cebu City. Brewed to perfection, baked with love.",
 };

@@ -20,6 +20,38 @@ export const business = {
   },
 };
 
+export type Branch = {
+  name: string;
+  tag: string;
+  address: string;
+  mapsUrl: string;
+  embedUrl: string;
+  image: string;
+};
+
+export const branches: Branch[] = [
+  {
+    name: "Tisa",
+    tag: "The original",
+    address: "Cabarrubias St. San Jose, Tisa, Cebu City, 6000 Cebu",
+    mapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=Cabarrubias+St.+San+Jose,+Tisa,+Cebu+City,+6000+Cebu",
+    embedUrl:
+      "https://www.google.com/maps?q=Cabarrubias+St.+San+Jose,+Tisa,+Cebu+City,+6000+Cebu&output=embed",
+    image: "/images/branch-tisa.jpg",
+  },
+  {
+    name: "Mandaue",
+    tag: "The newest",
+    address: "M. L. Quezon Ave, Casuntingan, Mandaue, 6014 Cebu",
+    mapsUrl:
+      "https://www.google.com/maps/dir/?api=1&destination=M.+L.+Quezon+Ave,+Casuntingan,+Mandaue,+6014+Cebu",
+    embedUrl:
+      "https://www.google.com/maps?q=M.+L.+Quezon+Ave,+Casuntingan,+Mandaue,+6014+Cebu&output=embed",
+    image: "/images/branch-mandaue.jpg",
+  },
+];
+
 export type Drink = {
   name: string;
   price: string;
@@ -116,7 +148,7 @@ export const faqs: Faq[] = [
   },
   {
     q: "Do you have other branch?",
-    a: "We don't have other branch as of now. We only have one store located in Tisa Cebu City, Cebu City, Philippines, 6000.",
+    a: "Yes! We now have two branches — the original in Tisa, Cebu City, and our newest store along M. L. Quezon Ave, Casuntingan, Mandaue City.",
   },
   {
     q: "What payment method do you accept?",

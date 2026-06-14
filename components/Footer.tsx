@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { business } from "@/lib/data";
+import { branches, business } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -74,9 +74,17 @@ export default function Footer() {
           <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-gold">
             Visit
           </p>
-          <p className="mt-4 max-w-[14rem] text-sm leading-relaxed text-foam/80">
-            {business.address}
-          </p>
+          {branches.map((b) => (
+            <p
+              key={b.name}
+              className="mt-4 max-w-[14rem] text-sm leading-relaxed text-foam/80"
+            >
+              <span className="font-mono text-[10px] uppercase tracking-[0.2em] text-foam/50">
+                {b.name} —{" "}
+              </span>
+              {b.address}
+            </p>
+          ))}
           <div className="mt-4 flex gap-4">
             {socials.map((s) => (
               <a
