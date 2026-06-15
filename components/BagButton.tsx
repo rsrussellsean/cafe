@@ -19,6 +19,10 @@ export default function BagButton({ scrolled }: { scrolled: boolean }) {
       const target = e.target as Element;
       // Adding more from the menu shouldn't close an open bag.
       if (target?.closest?.("[data-bag-keep-open]")) return;
+      // The dropdown is portaled to <body>, so it isn't inside containerRef —
+      // treat clicks within it as "inside" too (the scrim is intentionally not
+      // tagged, so tapping it still falls through and closes the bag).
+      if (target?.closest?.("[data-bag-dropdown]")) return;
       if (containerRef.current && !containerRef.current.contains(target as Node)) {
         setOpen(false);
       }
