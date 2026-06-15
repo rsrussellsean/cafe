@@ -275,14 +275,17 @@ function AddToBagButton({ drink }: { drink: Drink }) {
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
+    // Only the first time an item enters the bag should we pop the dropdown open.
+    // Re-adding an item that's already in the bag respects the current open state:
+    // if it's closed it stays closed (just increments + badge), if it's open it
+    // stays open. data-bag-keep-open stops the outside-click from closing it.
+    const isNew = qty === 0;
     startTransition(() => {
       bumpOptimistic(drink.name);
       add(drink);
     });
     setAdded(true);
-    // Open the bag on add. When it's already open this is a no-op (no re-pop),
-    // and the data-bag-keep-open attr stops the outside-click from closing it.
-    setOpen(true);
+    if (isNew) setOpen(true);
     window.setTimeout(() => setAdded(false), 1400);
   };
 
