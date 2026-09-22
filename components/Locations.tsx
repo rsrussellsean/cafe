@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ReserveButton from "@/components/ReserveButton";
 import { branches } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -62,12 +63,12 @@ export default function Locations() {
           >
             Find us in <em className="font-light text-gold">two</em> cities
           </h2>
-          <p
-            data-loc-head
-            className="font-mono text-[11px] uppercase tracking-[0.25em] text-foam/50"
-          >
-            ( same brew, twice the love )
-          </p>
+          <div data-loc-head className="flex flex-wrap items-center gap-6">
+            <p className="font-mono text-[11px] uppercase tracking-[0.25em] text-foam/50">
+              ( same brew, twice the love )
+            </p>
+            <ReserveButton variant="gold" />
+          </div>
         </div>
 
         <div className="mt-12 grid gap-8 md:mt-16 md:grid-cols-2 md:gap-10">

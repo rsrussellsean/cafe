@@ -5,6 +5,7 @@ import Link from "next/link";
 import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import BagReceipt from "@/components/BagReceipt";
+import DeliveryButtons from "@/components/DeliveryButtons";
 import BagRow from "@/components/BagRow";
 import { useBag, peso } from "@/lib/bag-context";
 import { saveReceiptPng } from "@/lib/save-image";
@@ -74,6 +75,12 @@ export default function BagPage() {
                 <BagReceipt ref={receiptRef} />
 
                 <div className="mx-auto mt-8 flex max-w-sm flex-col gap-3">
+                  <DeliveryButtons layout="stack" tone="dark" />
+                  <p className="font-mono text-[10px] leading-relaxed text-foam/45">
+                    Sends your order to the cafe&rsquo;s automation — not an order
+                    inside the GrabFood or Foodpanda app, and nothing is charged.
+                  </p>
+
                   <button
                     type="button"
                     onClick={handleSave}

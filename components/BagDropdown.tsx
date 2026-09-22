@@ -7,6 +7,7 @@ import { useBag, peso } from "@/lib/bag-context";
 import { saveReceiptPng } from "@/lib/save-image";
 import BagRow from "@/components/BagRow";
 import BagReceipt from "@/components/BagReceipt";
+import DeliveryButtons from "@/components/DeliveryButtons";
 
 export default function BagDropdown() {
   const { items, total, isOpen, setOpen, clear } = useBag();
@@ -120,14 +121,22 @@ export default function BagDropdown() {
               <span className="tabular-nums">₱ {peso(total)}</span>
             </div>
 
-            <button
+            {/* <button
               type="button"
               onClick={handleSave}
               disabled={saving}
               className="mt-4 w-full rounded-full bg-forest px-5 py-3 font-mono text-xs uppercase tracking-[0.2em] text-foam transition-colors hover:bg-forest-deep disabled:opacity-60"
             >
               {saving ? "Saving…" : "Save as image"}
-            </button>
+            </button> */}
+
+            <div className="mt-3 border-t border-ink/10 pt-3">
+              <DeliveryButtons layout="stack" tone="light" />
+              <p className="mt-3 font-mono text-[10px] leading-relaxed text-ink/45">
+                Sends your order to the cafe&rsquo;s automation — not an order inside
+                the GrabFood or Foodpanda app.
+              </p>
+            </div>
 
             <div className="mt-3 flex items-center justify-between gap-3">
               <button

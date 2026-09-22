@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
+import ReserveButton from "@/components/ReserveButton";
 import { business } from "@/lib/data";
 
 export default function Hero() {
@@ -232,13 +233,16 @@ export default function Hero() {
           irresistible cakes.
         </p>
 
-        <div data-hero-fade className="mt-8 flex items-center gap-5">
+        <div data-hero-fade className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-4">
           <a
             href="#menu"
             className="rounded-full bg-forest px-8 py-3.5 font-mono text-xs uppercase tracking-[0.2em] text-foam transition-colors duration-300 hover:bg-gold hover:text-forest-deep"
           >
             Order Now
           </a>
+          {/* Visible at every breakpoint — the nav hides its Reserve button on
+              mobile, so this is the primary way phone visitors find it. */}
+          <ReserveButton variant="ghost" />
           <a
             href="#testimonials"
             className="link-line font-mono text-xs uppercase tracking-[0.2em] text-ink"
