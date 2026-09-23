@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import ReserveButton from "@/components/ReserveButton";
 import { branches, business } from "@/lib/data";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -68,6 +69,10 @@ export default function Footer() {
           >
             {business.phone}
           </a>
+          <ReserveButton
+            variant="link"
+            className="mt-4 block text-gold"
+          />
         </div>
 
         <div>

@@ -3,12 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { useBag } from "@/lib/bag-context";
 import BagDropdown from "@/components/BagDropdown";
+import { usePathname } from "next/navigation";
 
 export default function BagButton({ scrolled }: { scrolled: boolean }) {
   const { count, isOpen, setOpen } = useBag();
   const containerRef = useRef<HTMLDivElement>(null);
   const [pop, setPop] = useState(false);
-
+  const pathname = usePathname();
+  const isBagPage = pathname === "/bag";
   // close when clicking anywhere outside the button + dropdown, or on Escape.
   // Detection lives on the whole container so clicking the toggle button
   // itself counts as "inside" — the button's onClick handles the toggle
@@ -23,12 +25,20 @@ export default function BagButton({ scrolled }: { scrolled: boolean }) {
       // treat clicks within it as "inside" too (the scrim is intentionally not
       // tagged, so tapping it still falls through and closes the bag).
       if (target?.closest?.("[data-bag-dropdown]")) return;
+      // A modal opened from inside the bag (e.g. the delivery order dialog) is
+      // portaled alongside it, not within it — clicking in there must not close
+      // the bag out from under the dialog.
+      if (target?.closest?.("[data-app-dialog]")) return;
       if (containerRef.current && !containerRef.current.contains(target as Node)) {
         setOpen(false);
       }
     };
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
+      // Escape belongs to the topmost layer: if a modal is open, let it close
+      // first rather than collapsing the bag behind it.
+      if (e.key !== "Escape") return;
+      if (document.querySelector("[data-app-dialog]")) return;
+      setOpen(false);
     };
     document.addEventListener("mousedown", onDown);
     document.addEventListener("keydown", onKey);
@@ -54,7 +64,9 @@ export default function BagButton({ scrolled }: { scrolled: boolean }) {
         aria-label={`Open bag, ${count} item${count === 1 ? "" : "s"}`}
         aria-expanded={isOpen}
         className={`relative flex h-10 w-10 items-center justify-center rounded-full transition-colors duration-300 ${
-          scrolled ? "text-foam hover:bg-foam/10" : "text-ink hover:bg-ink/5"
+          scrolled || isBagPage
+            ? "text-foam hover:bg-foam/10"
+            : "text-ink hover:bg-ink/5"
         }`}
       >
         <span
